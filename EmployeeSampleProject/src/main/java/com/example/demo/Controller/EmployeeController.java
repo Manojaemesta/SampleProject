@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,8 @@ public class EmployeeController {
 	{		
 		return empDAO.findByDeptCode(deptCode);
 	}
-	
-	
+
+
 	//To get the all Employee
 	@GetMapping("/Employee")
 	public List<EmployeeDO> getEmplyee()
@@ -55,5 +56,23 @@ public class EmployeeController {
 	public void saveOrUpdateEmployee(@RequestBody EmployeeDO employeeDO)
 	{		
 		empDAO.save(employeeDO);
+	}
+
+	///// Get Employee list based deptCode or empFirstName or lstName or job
+	@GetMapping("/Employee/{deptCode}/{empFirst}/{empLast}/{job}")
+	public List<EmployeeDO> getEmplyees(@PathVariable String deptCode,@PathVariable String empFirst,@PathVariable String empLast, @PathVariable String job)
+	{		
+		List<EmployeeDO> employeeDOs =  empDAO.findAll();
+		List<EmployeeDO> newEmployeeDOs = new ArrayList<>();
+		employeeDOs.forEach(employee -> 
+		{
+			if((!empFirst.equals(null) && employee.getEmpFirstName().equals(empFirst)) || (!empLast.equals(null) && employee.getEmpLastName().equals(empLast))||(!deptCode.equals(null) && employee.getDeptCode().equals(deptCode))||(!job.equals(null) && employee.getJob().equals(job)))
+			{
+				newEmployeeDOs.add(employee);
+			}
+				
+		});
+
+		return newEmployeeDOs;
 	}
 }
